@@ -1,0 +1,12 @@
+# Environment
+.env
+
+# Node modules (ALL folders)
+node_modules/
+
+# Backend specific
+backend/uploads/
+backend/data/
+
+# Frontend build
+frontend/dist/

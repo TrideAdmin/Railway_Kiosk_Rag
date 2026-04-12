@@ -1,0 +1,9 @@
+train_number,train_name,from,to,scheduled_arrival,actual_arrival,scheduled_departure,actual_departure,platform,status,delay_minutes
+12951,Mumbai Rajdhani,Mumbai Central,New Delhi,08:35,08:52,08:45,09:02,3,delayed,17
+12002,Bhopal Shatabdi,New Delhi,Habibganj,10:00,10:00,06:00,06:00,1,on-time,0
+22691,Rajdhani Express,Bangalore,New Delhi,20:00,21:30,20:10,21:40,5,delayed,90
+12301,Howrah Rajdhani,Howrah,New Delhi,09:55,09:55,10:05,10:05,2,on-time,0
+19027,Vivek Express,Dibrugarh,Kanyakumari,14:20,15:05,14:30,15:15,6,delayed,45
+12563,Bihar Sampark Kranti,New Delhi,Rajendranagar,11:00,11:00,11:05,11:05,4,on-time,0
+17064,Ajanta Express,Secunderabad,Mumbai CSMT,13:10,13:10,13:20,13:20,3,on-time,0
+12723,AP Express,Hyderabad,Hazrat Nizamuddin,07:30,07:45,07:40,07:55,1,delayed,15

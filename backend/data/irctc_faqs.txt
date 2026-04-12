@@ -1,0 +1,41 @@
+
+FREQUENTLY ASKED QUESTIONS — RAILWAY STATION
+
+Q: How do I check my PNR status?
+A: You can check PNR status by calling 139, visiting indianrailways.gov.in, using the IRCTC app, or SMS "PNR <10-digit PNR number>" to 139.
+
+Q: What happens if my train is delayed?
+A: If a train is delayed by more than 3 hours, you can get a full refund by filing a TDR (Ticket Deposit Receipt) within 72 hours.
+
+Q: Where can I get wheelchair assistance?
+A: Wheelchair assistance is available at gates 1A and 5. Call 139 at least 2 hours before your train to book assistance.
+
+Q: What is the Rajdhani Express?
+A: Rajdhani Express trains are premium, fully air-conditioned express trains that connect major cities to New Delhi. They are among the fastest and most comfortable trains in India. Train 22691 runs from Bangalore to New Delhi.
+
+Q: What is the Shatabdi Express?
+A: Shatabdi Express trains are day-time intercity trains with AC chair car service. They offer meals included in the ticket price. Train 12002 (Bhopal Shatabdi) runs from New Delhi to Habibganj.
+
+Q: How early should I arrive at the station?
+A: Arrive at least 30 minutes before departure for regular trains, and 1 hour before for long-distance trains. Platform gates open 20 minutes before scheduled departure.
+
+Q: Is there free Wi-Fi at the station?
+A: Yes, RailWire free Wi-Fi is available. Look for "RailWire" network and authenticate using your mobile number.
+
+Q: How do I use the cloakroom?
+A: Cloakroom at Platform 1 is open 24 hours (Rs 30/item/day). Platform 3 cloakroom charges Rs 30/hour. Carry a valid ID and your ticket receipt.
+
+Q: What food is available at the station?
+A: Platform 5 has the largest food court with 20+ items including Domino's Express. Platform 3 has IRCTC-licensed food. Platform 1 has Amul and juice stalls. Tea and snacks are available on all platforms.
+
+Q: Can I upgrade my ticket class?
+A: Upgrades can be done at the Reservation Counter before departure, subject to availability. Tatkal upgrades carry additional charges.
+
+Q: What is the Mumbai Rajdhani?
+A: Mumbai Rajdhani (train number 12951) runs from Mumbai Central to New Delhi. It is a prestigious overnight premium train covering the 1,385 km journey. Today it arrives at Platform 3 and is running 17 minutes behind schedule.
+
+Q: What is the AP Express?
+A: AP Express (train number 12723) runs from Hyderabad to Hazrat Nizamuddin in New Delhi. It serves Andhra Pradesh and Telangana passengers. Today it arrives at Platform 1 at 07:45 AM, running 15 minutes late.
+
+Q: What is the Vivek Express?
+A: Vivek Express (train number 19027) is the longest train route in India, running from Dibrugarh in Assam to Kanyakumari in Tamil Nadu. Today it passes through Platform 6 and is running 45 minutes late.
