@@ -5,12 +5,17 @@
 /**
  * Send voice audio to /voice endpoint.
  */
+const API_BASE = "https://railway-kiosk-rag.onrender.com";
+
 export async function sendVoiceMessage(audioBlob, language = "en-IN") {
   const formData = new FormData();
   formData.append("audio", audioBlob, "recording.webm");
   formData.append("language", language);
 
-  const response = await fetch("/voice", { method: "POST", body: formData });
+  const response = await fetch(`${API_BASE}/voice`, {
+    method: "POST",
+    body: formData,
+  });
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({}));
@@ -26,11 +31,9 @@ export async function sendVoiceMessage(audioBlob, language = "en-IN") {
   return { audioBlob: audioBuffer, transcript, responseText, source, intent };
 }
 
-/**
- * Send text query to /text endpoint.
- */
+// ✅ FIXED
 export async function sendTextMessage(text, language = "en-IN") {
-  const response = await fetch("/text", {
+  const response = await fetch(`${API_BASE}/text`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text, language }),
@@ -49,14 +52,13 @@ export async function sendTextMessage(text, language = "en-IN") {
   return { audioBlob: audioBuffer, responseText, source, intent };
 }
 
-/**
- * Direct RAG query without TTS (for Admin Panel testing).
- */
+// ✅ FIXED
 export async function queryRAG(query, language = "en-IN") {
-  const response = await fetch("/query", {
+  const response = await fetch(`${API_BASE}/query`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ query, language, tts: false }),
   });
+
   return response.json();
 }
