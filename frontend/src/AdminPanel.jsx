@@ -1,7 +1,7 @@
 // AdminPanel.jsx — RAG Document Ingestion Admin Panel
 import { useState, useEffect, useCallback } from "react";
 
-const API_URL = ""; // Vite proxy forwards to backend on port 5000
+const API_URL = import.meta.env.PROD ? "https://suraksha-sevika-api.tride.live" : ""; // Vite proxy forwards to backend on port 5000 in dev
 
 export default function AdminPanel({ onClose }) {
   const [tab, setTab] = useState("upload");

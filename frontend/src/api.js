@@ -65,7 +65,7 @@
 // }
 // api.js — Frontend API client
 
-const API_BASE = "https://suraksha-sevika-api.tride.live";
+const API_BASE = import.meta.env.PROD ? "https://suraksha-sevika-api.tride.live" : "";
 
 // =============================================
 // VOICE
