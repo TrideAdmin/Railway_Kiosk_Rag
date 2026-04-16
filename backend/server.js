@@ -11,7 +11,6 @@
 // const { speechToText, textToSpeech } = require("./sarvam");
 // const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-
 // // ── Gemini direct client (lazy) ───────────────────────────────────────────────
 // let _gemini = null;
 // function getGemini() {
@@ -485,7 +484,7 @@
 // // =============================================
 
 // app.listen(PORT, () => {
-  
+
 //   console.log(`\n🚂 Railway Voice Bot + RAG`);
 //   console.log(`📡 http://localhost:${PORT}`);
 //   console.log(`🔍 Health:   GET  /health`);
@@ -510,7 +509,6 @@ const fs = require("fs");
 const { speechToText, textToSpeech } = require("./sarvam");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-
 // ── Gemini direct client (lazy) ───────────────────────────────────────────────
 let _gemini = null;
 function getGemini() {
@@ -524,7 +522,11 @@ const LANG_NAMES = { "en-IN": "English", "hi-IN": "Hindi", "te-IN": "Telugu" };
  * Gemini direct query — used when Pinecone is unavailable or not yet set up.
  * Answers railway questions using built-in knowledge + intent context.
  */
-async function geminiDirectQuery(userQuery, language = "en-IN", intentContext = null) {
+async function geminiDirectQuery(
+  userQuery,
+  language = "en-IN",
+  intentContext = null,
+) {
   const langName = LANG_NAMES[language] || "English";
   const model = getGemini().getGenerativeModel({
     model: "gemini-2.5-flash",
@@ -537,8 +539,12 @@ Rules:
 4. For "help me" or "what can you do" — briefly explain you can answer questions about train timings, platforms, delays, PNR status, ticket booking, and station facilities.
 5. Always be helpful and friendly.`,
   });
-  const contextNote = intentContext ? `\nContext: ${JSON.stringify(intentContext)}` : "";
-  const result = await model.generateContent(`Passenger query: "${userQuery}"${contextNote}\nAnswer in ${langName}:`);
+  const contextNote = intentContext
+    ? `\nContext: ${JSON.stringify(intentContext)}`
+    : "";
+  const result = await model.generateContent(
+    `Passenger query: "${userQuery}"${contextNote}\nAnswer in ${langName}:`,
+  );
   return result.response.text().trim();
 }
 const { detectIntent } = require("./intent");
@@ -557,21 +563,32 @@ const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://suraksha-sevika.tride.live"
+  "https://suraksha-sevika.tride.live",
 ];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type"],
-  exposedHeaders: ["x-transcript", "x-intent", "x-response-text"]
-}));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type"],
+    exposedHeaders: [
+      "X-Transcript",
+      "X-Intent",
+      "X-Response-Text",
+      "X-Source",
+      "Content-Type",
+      "Content-Length",
+    ],
+  }),
+);
+
+app.options("*", cors());
 
 app.options("*", cors());
 
@@ -590,13 +607,19 @@ if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 const audioStorage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadsDir),
   filename: (req, file, cb) =>
-    cb(null, `audio_${Date.now()}_${Math.random().toString(36).substr(2, 9)}.webm`),
+    cb(
+      null,
+      `audio_${Date.now()}_${Math.random().toString(36).substr(2, 9)}.webm`,
+    ),
 });
 const audioUpload = multer({
   storage: audioStorage,
   limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith("audio/") || /\.(wav|webm|ogg)$/.test(file.originalname)) {
+    if (
+      file.mimetype.startsWith("audio/") ||
+      /\.(wav|webm|ogg)$/.test(file.originalname)
+    ) {
       cb(null, true);
     } else {
       cb(new Error("Only audio files are allowed"), false);
@@ -608,7 +631,10 @@ const docStorage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, dataDir),
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
-    cb(null, `doc_${Date.now()}_${Math.random().toString(36).substr(2, 6)}${ext}`);
+    cb(
+      null,
+      `doc_${Date.now()}_${Math.random().toString(36).substr(2, 6)}${ext}`,
+    );
   },
 });
 const docUpload = multer({
@@ -639,20 +665,60 @@ function cleanupFile(filePath) {
 /** Pre-process text specifically for TTS out-aloud (converts dense digits to space-separated words depending on language) */
 function formatForSpeech(text, lang) {
   if (!text) return text;
-  const EN = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
-  const HI = ["शून्य", "एक", "दो", "तीन", "चार", "पाँच", "छह", "सात", "आठ", "नौ"];
-  const TE = ["సున్న", "ఒకటి", "రెండు", "మూడు", "నాలుగు", "అయిదు", "ఆరు", "ఏడు", "ఎనిమిది", "తొమ్మిది"];
+  const EN = [
+    "zero",
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+  ];
+  const HI = [
+    "शून्य",
+    "एक",
+    "दो",
+    "तीन",
+    "चार",
+    "पाँच",
+    "छह",
+    "सात",
+    "आठ",
+    "नौ",
+  ];
+  const TE = [
+    "సున్న",
+    "ఒకటి",
+    "రెండు",
+    "మూడు",
+    "నాలుగు",
+    "అయిదు",
+    "ఆరు",
+    "ఏడు",
+    "ఎనిమిది",
+    "తొమ్మిది",
+  ];
   const base = lang.startsWith("hi") ? HI : lang.startsWith("te") ? TE : EN;
 
-  return text.replace(/\b\d{4,5}\b/g, match => {
-    return match.split("").map(d => base[parseInt(d)]).join(" ");
+  return text.replace(/\b\d{4,5}\b/g, (match) => {
+    return match
+      .split("")
+      .map((d) => base[parseInt(d)])
+      .join(" ");
   });
 }
 
 /** Sanitize errors sent to the frontend to prevent leaking absolute paths or verbose native stack traces */
 function sanitizeError(msg) {
   if (!msg) return "Unexpected error";
-  if (msg.includes("ffmpeg") || msg.includes("Command failed") || msg.includes("Audio conversion failed")) {
+  if (
+    msg.includes("ffmpeg") ||
+    msg.includes("Command failed") ||
+    msg.includes("Audio conversion failed")
+  ) {
     return "Audio processing failed. Please check your microphone format or try again.";
   }
   if (msg.includes("quota") || msg.includes("429")) {
@@ -674,12 +740,23 @@ function sanitizeError(msg) {
  * 3. RAG fallback → Sarvam Chat
  */
 const STATIC_INTENTS = new Set([
-  "greeting", "farewell", "pnr_status", "ticket_info", "no_input",
+  "greeting",
+  "farewell",
+  "pnr_status",
+  "ticket_info",
+  "no_input",
 ]);
 
-async function buildHybridResponse(userQuery, intentData, staticText, language) {
+async function buildHybridResponse(
+  userQuery,
+  intentData,
+  staticText,
+  language,
+) {
   let parsedIntent = null;
-  try { parsedIntent = JSON.parse(intentData); } catch (_) { }
+  try {
+    parsedIntent = JSON.parse(intentData);
+  } catch (_) {}
   const topic = parsedIntent?.topic || "unknown";
 
   // Fast path: simple intents that don't need RAG
@@ -701,7 +778,11 @@ async function buildHybridResponse(userQuery, intentData, staticText, language) 
 
   // Gemini direct fallback — no vector search, just smart LLM response
   try {
-    const geminiResponse = await geminiDirectQuery(userQuery, language, parsedIntent);
+    const geminiResponse = await geminiDirectQuery(
+      userQuery,
+      language,
+      parsedIntent,
+    );
     if (geminiResponse && geminiResponse.trim().length > 5) {
       console.log("[Routing] Gemini direct response used");
       return { response: geminiResponse, source: "gemini" };
@@ -784,11 +865,18 @@ app.post("/ingest", docUpload.array("files", 20), async (req, res) => {
     // Handle JSON body sources (API endpoints, inline text)
     if (req.body.sources) {
       const bodySources = JSON.parse(req.body.sources || "[]");
-      sources.push(...bodySources.map((s) => ({ ...s, namespace: s.namespace || namespace })));
+      sources.push(
+        ...bodySources.map((s) => ({
+          ...s,
+          namespace: s.namespace || namespace,
+        })),
+      );
     }
 
     if (sources.length === 0) {
-      return res.status(400).json({ error: "No sources provided. Upload files or send sources array." });
+      return res.status(400).json({
+        error: "No sources provided. Upload files or send sources array.",
+      });
     }
 
     const result = await ingestDocuments(sources);
@@ -830,13 +918,25 @@ app.post("/query", async (req, res) => {
   console.log("[Query]", query, "| Lang:", language);
 
   try {
-    const { intent, response: staticText, intentData } = detectIntent(query, language);
-    const { response, source } = await buildHybridResponse(query, intentData, staticText, language);
+    const {
+      intent,
+      response: staticText,
+      intentData,
+    } = detectIntent(query, language);
+    const { response, source } = await buildHybridResponse(
+      query,
+      intentData,
+      staticText,
+      language,
+    );
 
     console.log(`[Query] Source: ${source} | Intent: ${intent}`);
 
     if (tts) {
-      const audioBuffer = await textToSpeech(formatForSpeech(response, language), language);
+      const audioBuffer = await textToSpeech(
+        formatForSpeech(response, language),
+        language,
+      );
       res.set({
         "Content-Type": "audio/wav",
         "Content-Length": audioBuffer.length,
@@ -870,21 +970,38 @@ app.post("/voice", audioUpload.single("audio"), async (req, res) => {
     const transcript = await speechToText(uploadedFilePath, language);
     if (!transcript?.trim()) {
       cleanupFile(uploadedFilePath);
-      return res.status(400).json({ error: "Could not transcribe audio. Please speak clearly." });
+      return res
+        .status(400)
+        .json({ error: "Could not transcribe audio. Please speak clearly." });
     }
     console.log("[Voice] Transcript:", transcript);
 
     // Step 2: Intent detection
-    const { intent, response: staticText, intentData } = detectIntent(transcript, language);
+    const {
+      intent,
+      response: staticText,
+      intentData,
+    } = detectIntent(transcript, language);
 
     // Step 3: Hybrid RAG response
     const { response: responseText, source } = await buildHybridResponse(
-      transcript, intentData, staticText, language
+      transcript,
+      intentData,
+      staticText,
+      language,
     );
-    console.log("[Voice] Response source:", source, "| Text:", responseText.substring(0, 80));
+    console.log(
+      "[Voice] Response source:",
+      source,
+      "| Text:",
+      responseText.substring(0, 80),
+    );
 
     // Step 4: TTS
-    const audioBuffer = await textToSpeech(formatForSpeech(responseText, language), language);
+    const audioBuffer = await textToSpeech(
+      formatForSpeech(responseText, language),
+      language,
+    );
     cleanupFile(uploadedFilePath);
 
     res.set({
@@ -896,7 +1013,6 @@ app.post("/voice", audioUpload.single("audio"), async (req, res) => {
       "X-Source": source,
     });
     return res.send(audioBuffer);
-
   } catch (error) {
     cleanupFile(uploadedFilePath);
     console.error("[Voice] Error:", error.message);
@@ -916,14 +1032,26 @@ app.post("/text", async (req, res) => {
   console.log("[Text]", text, "| Lang:", language);
 
   try {
-    const { intent, response: staticText, intentData } = detectIntent(text, language);
+    const {
+      intent,
+      response: staticText,
+      intentData,
+    } = detectIntent(text, language);
     const { response: responseText, source } = await buildHybridResponse(
-      text, intentData, staticText, language
+      text,
+      intentData,
+      staticText,
+      language,
     );
 
-    console.log(`[Text] Intent: ${intent} | Source: ${source} | Text: ${responseText.substring(0, 80)}`);
+    console.log(
+      `[Text] Intent: ${intent} | Source: ${source} | Text: ${responseText.substring(0, 80)}`,
+    );
 
-    const audioBuffer = await textToSpeech(formatForSpeech(responseText, language), language);
+    const audioBuffer = await textToSpeech(
+      formatForSpeech(responseText, language),
+      language,
+    );
     res.set({
       "Content-Type": "audio/wav",
       "Content-Length": audioBuffer.length,
@@ -984,7 +1112,6 @@ app.use((err, req, res, next) => {
 // =============================================
 
 app.listen(PORT, () => {
-  
   console.log(`\n🚂 Railway Voice Bot + RAG`);
   console.log(`📡 http://localhost:${PORT}`);
   console.log(`🔍 Health:   GET  /health`);
@@ -994,5 +1121,7 @@ app.listen(PORT, () => {
   console.log(`⌨️  Text:     POST /text`);
   console.log(`📊 Stats:    GET  /ingest/stats`);
   console.log(`🗑️  Clear:    DELETE /ingest/clear`);
-  console.log(`\n⚠️  Ensure .env has: GEMINI_API_KEY, PINECONE_API_KEY, SARVAM_API_KEY\n`);
+  console.log(
+    `\n⚠️  Ensure .env has: GEMINI_API_KEY, PINECONE_API_KEY, SARVAM_API_KEY\n`,
+  );
 });
