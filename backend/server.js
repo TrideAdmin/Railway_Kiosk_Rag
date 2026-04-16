@@ -56,8 +56,27 @@ const PORT = process.env.PORT || 5000;
 // MIDDLEWARE
 // =============================================
 
-app.use(cors({ origin: "*" }));
-app.use(express.json({ limit: "50mb" }));
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://suraksha-sevika.tride.live"
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"],
+  exposedHeaders: ["x-transcript", "x-intent", "x-response-text"]
+}));
+
+app.options("*", cors());
+
+app.use(express.json());
 
 const uploadsDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
