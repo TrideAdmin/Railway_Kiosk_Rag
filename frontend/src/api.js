@@ -5,7 +5,7 @@
 /**
  * Send voice audio to /voice endpoint.
  */
-const API_BASE = "https://railway-kiosk-rag.onrender.com";
+const API_BASE = "https://suraksha-sevika-api.tride.live";
 
 export async function sendVoiceMessage(audioBlob, language = "en-IN") {
   const formData = new FormData();
