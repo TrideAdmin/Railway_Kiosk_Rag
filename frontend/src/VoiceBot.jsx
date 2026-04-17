@@ -2,6 +2,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { sendVoiceMessage, sendTextMessage } from "./api";
 import AdminPanel from "./AdminPanel";
+import avatarPng from "../assests/avatar.png";
 
 const STATUS = {
   IDLE: "idle",
@@ -246,14 +247,14 @@ export default function VoiceBot() {
             <button
               className={`vb-mic-btn ${isRecording ? "recording" : ""} ${isPlaying ? "playing" : ""}`}
               onClick={handleMicClick}
-              disabled={isProcessing}>
-              {isRecording || isPlaying ? <StopIcon /> : <MicIcon />}
-              <span className="vb-mic-label">
-                {isRecording ? language.stopLabel
+              title={
+                isRecording ? language.stopLabel
                   : isProcessing ? language.processingLabel
                     : isPlaying ? language.stopLabel
-                      : language.speakLabel}
-              </span>
+                      : language.speakLabel
+              }
+              disabled={isProcessing}>
+              <img src={avatarPng} alt="Assistant Avatar" className="vb-avatar-img" />
               {isRecording && <><span className="vb-pulse-ring" /><span className="vb-pulse-ring vb-pulse-ring--delay" /></>}
             </button>
           </div>
